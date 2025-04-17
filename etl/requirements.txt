@@ -1,0 +1,3 @@
+PySpark
+boto3
+aws-glue-libs
