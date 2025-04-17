@@ -1,0 +1,27 @@
+dealership-attribution-platform/
+├── terraform/
+│   ├── providers.tf
+│   ├── variables.tf
+│   ├── main.tf
+│   └── outputs.tf
+├── lambda/
+│   ├── fetch_facebook_ads/
+│   │   ├── handler.py
+│   │   └── requirements.txt
+│   └── webhook_listener/
+│       ├── handler.py
+│       └── requirements.txt
+├── etl/
+│   ├── ads_etl.py
+│   └── requirements.txt
+├── modeling/
+│   ├── bayesian_mmm.py
+│   └── requirements.txt
+├── container/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+└── README.md
