@@ -1,0 +1,48 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Terraform Init & Apply
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+
+  lambda-deploy:
+    needs: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Zip & Deploy Fetch Ads
+        run: |
+          cd lambda/fetch_facebook_ads
+          zip function.zip handler.py requirements.txt
+          aws lambda update-function-code --function-name fetch_facebook_ads --zip-file fileb://function.zip
+      - name: Zip & Deploy Webhook
+        run: |
+          cd lambda/webhook_listener
+          zip function.zip handler.py requirements.txt
+          aws lambda update-function-code --function-name webhook_listener --zip-file fileb://function.zip
+
+  api-deploy:
+    needs: [terraform, lambda-deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker
+        run: |
+          cd container
+          docker build -t attribution-api .
+      - name: Push & Deploy to ECS
+        run: |
+          # ECR login, push image, update ECS service
+          echo "Deploy logic here"
